@@ -10,7 +10,7 @@
 class Node {  // A tree node
     public:
     std::string key;
-    uint64_t size;
+    unsigned long long size;
     Node *R;  // Right node
     Node *L;  // Left node
 
@@ -21,7 +21,7 @@ class Node {  // A tree node
     }
 
     // Node constructor
-    Node(const std::string& value = "", uint64_t amount = 0, Node * left = NULL, Node * right = NULL)
+    Node(const std::string& value = "", unsigned long long amount = 0, Node * left = NULL, Node * right = NULL)
     {
         key = value;
         size = amount;
