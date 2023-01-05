@@ -244,4 +244,6 @@ double coder(const char* input_name = "input.txt", const char* output_name = "en
 }
 
 int main()
-{}
+{
+    std::cout << coder() << std::endl;  // Print compression ratio
+}
