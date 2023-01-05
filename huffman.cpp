@@ -37,5 +37,20 @@ class Node {  // A tree node
 };
 
 
+// Builds Huffman tree function
+Node * builder(std::priority_queue<Node, std::vector<Node>, Node> leafs)
+{
+    while (leafs.size() > 1)
+    {
+        Node *n = new Node(leafs.top());
+
+        leafs.pop();
+        std::cout << "Build: " << n->key << " " << leafs.top().key << std::endl;
+        leafs.push(*n->join(*new Node(leafs.top())));
+        leafs.pop();
+    }
+    return new Node(leafs.top());
+}
+
 int main()
 {}
