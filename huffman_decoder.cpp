@@ -147,5 +147,52 @@ void decoder(const char* input_name = "encoded.txt", const char* output_name = "
 }
 
 
-int main() 
-{}
+// Checking for file matches
+unsigned int checker(const char* before_name = "input.txt", const char* after_name = "output.txt")
+{
+    unsigned int same = 0;
+    FILE* before_file = fopen(before_name, "r");
+    FILE* after_file = fopen(after_name, "r");
+
+    unsigned char after_l = 0;
+    unsigned char before_l = 0;
+    while (!feof(after_file) && !feof(before_file))
+    {
+        after_l = fgetc(after_file);
+        before_l = fgetc(before_file);
+        if (!feof(after_file) && !feof(before_file))
+        {
+            if (after_l != before_l)
+            {
+                same++;
+            }
+        }
+    }
+
+    while (!feof(after_file))
+    {
+        after_l = fgetc(after_file);
+        if (!feof(after_file))
+        {
+            same++;
+        }
+    }
+
+    while (!feof(before_file))
+    {
+        before_l = fgetc(before_file);
+        if (!feof(before_file))
+        {
+            same++;
+        }
+    }
+    fclose(after_file);
+    fclose(before_file);
+    return same;
+}
+
+int main()
+{
+    decoder();
+    std::cout << checker() << std::endl;
+}
