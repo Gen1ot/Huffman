@@ -38,13 +38,114 @@ Node * builder(std::priority_queue<Node, std::vector<Node>, Node> tree) {
             Node *n = new Node(tree.top());
 
             tree.pop();
-            std::cout << "Build: " << n->key << " "
-                        << tree.top().key << std::endl;
             tree.push(*n->join(*new Node(tree.top())));
             tree.pop();
         }
         return new Node(tree.top());
 }
+
+// Decoding function
+void decoder(const char* input_name = "encoded.txt", const char* output_name = "output.txt")
+{
+    unsigned long long * alfabet = new unsigned long long[256];
+    for (int i = 0; i < 256; i++)
+    {
+        alfabet[i] = 0;
+    }
+    FILE* input_file = fopen(input_name, "rb");  // Open input file
+    if (input_file == nullptr)
+    {
+       throw std::invalid_argument("File not found.");
+    }
+    unsigned char col = 0;
+    unsigned int col_letters = 0;
+    col = fgetc(input_file);
+    if (!feof(input_file))
+    {
+       col_letters =(unsigned int) col;
+    }
+
+    unsigned char character = 0;
+    // Reading the letters used and their number
+    for (int i = 0; i < col_letters; i++)
+    {
+        character = fgetc(input_file);
+        if (!feof(input_file))
+        {
+            fread(reinterpret_cast<char*>(&alfabet[character]), sizeof(unsigned long long), 1, input_file);
+        }
+        else
+        {
+            throw std::invalid_argument("Can't decompress file.");
+        }
+    }
+
+    std::priority_queue<Node, std::vector<Node>, Node> tree;
+    for (int i = 0; i < 256; i++)
+    {
+        if (alfabet[i] != 0)
+        {
+            std::string s(1, static_cast<char>(i));
+
+            Node new_leaf(s, alfabet[i]);
+            tree.push(new_leaf);
+        }
+    }
+    character = 0;
+    Node *n = builder(tree);
+
+    FILE* output_file = fopen(output_name, "wb +");
+    Node *nodes = n;
+    unsigned char letter = 0;
+    while (!feof(input_file))
+    {  // Decompressing the file
+        character = fgetc(input_file);
+        if (!feof(input_file))
+        {
+            for (int i = 7; i > -1; i--)
+            {
+                if (((character >> i) & 1) == 1) // Right nodes
+                {
+                    if (nodes->R == NULL)
+                    {
+                        letter = nodes->key[0];
+                        if (alfabet[letter] > 0)
+                        {
+                            alfabet[letter]--;
+                            fputc(letter, output_file);
+                            nodes = n->R;
+                        }
+                    }
+                    else
+                    {
+                        nodes = nodes->R;
+                    }
+                }
+                else if (((character >> i) & 1) == 0) //Left nodes
+                {
+                    if (nodes->L == NULL)
+                    {
+                        letter = nodes->key[0];
+                        if (alfabet[letter] > 0)
+                        {
+                            fputc(letter, output_file);
+                            nodes = n->L;
+                            alfabet[letter]--;
+                        }
+                    }
+                    else
+                    {
+                        nodes = nodes->L;
+                    }
+                }
+            }
+       }
+    }
+
+    fclose(input_file);
+    fclose(output_file);
+}
+
 
 int main() 
 {}
