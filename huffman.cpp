@@ -45,7 +45,6 @@ Node * builder(std::priority_queue<Node, std::vector<Node>, Node> leafs)
         Node *n = new Node(leafs.top());
 
         leafs.pop();
-        std::cout << "Build: " << n->key << " " << leafs.top().key << std::endl;
         leafs.push(*n->join(*new Node(leafs.top())));
         leafs.pop();
     }
@@ -69,7 +68,7 @@ void huffmanCodes(Node* root, std::string code, std::unordered_map <std::string,
 }
 
 // Coding function
-double coder(const char* input_name = "input.txt", const char* output_name = "encoded.txt")
+void coder(const char* input_name = "input.txt", const char* output_name = "encoded.txt")
 {
     unsigned long long * alfabet = new unsigned long long[256];
     for (int i = 0; i < 256; i++)
@@ -218,32 +217,9 @@ double coder(const char* input_name = "input.txt", const char* output_name = "en
 
     fclose(input_file);
     fclose(output_file);
-
-    unsigned long long file_full_size = 0;
-    unsigned long long commpres_size = 0;
-    struct stat sb{};
-    struct stat se{};
-    // Finding compression ratio
-    if (!stat(input_name, &sb))
-    {
-        file_full_size = sb.st_size;
-    }
-    else 
-    {
-        perror("stat");
-    }
-    if (!stat(output_name, &se))
-    {
-        commpres_size = se.st_size;
-    }
-    else
-    {
-        perror("stat");
-    }
-    return (commpres_size + 0.0) / file_full_size;
 }
 
 int main()
 {
-    std::cout << coder() << std::endl;  // Print compression ratio
+    coder();
 }
